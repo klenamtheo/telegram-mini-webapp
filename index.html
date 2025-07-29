@@ -49,25 +49,42 @@
     tg.expand();
     document.getElementById("username").textContent = tg.initDataUnsafe.user?.first_name || "User";
 
-    function submitBundle() {
-      const bundle = document.getElementById("bundle").value;
-      const phone = document.getElementById("phone").value;
-      const amount = document.getElementById("amount").value;
+function submitBundle() {
+  const bundle = document.getElementById("bundle").value;
+  const phone = document.getElementById("phone").value;
+  const amount = document.getElementById("amount").value;
 
-      if (!phone || !amount) {
-        alert("Please fill in all fields.");
-        return;
-      }
+  if (!phone || !amount) {
+    alert("Please fill in all fields.");
+    return;
+  }
 
-      const requestData = {
-        user: tg.initDataUnsafe.user,
-        bundle,
-        phone,
-        amount,
-      };
+const requestData = {
+  user: { first_name: "TestUser", id: "123456789" },
+  bundle,
+  phone,
+  amount,
+};
 
-      tg.sendData(JSON.stringify(requestData)); // Sends to your Telegram Bot
-    }
+
+  // Send the POST request.
+  fetch("https://1f48f9747006.ngrok-free.app/Telegram/backend/process.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(requestData),
+  })
+  .then(response => response.json())
+  .then(result => {
+    alert(result.message);
+    tg.close(); // Closes the Web App after successful submission.
+  })
+  .catch(error => {
+    alert("An error occurred while processing your request.");
+    console.error(error);
+  });
+}
   </script>
 </body>
 </html>
