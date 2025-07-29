@@ -45,49 +45,51 @@
   <button type="button" onclick="submitBundle()">Buy Bundle</button>
 
 
-  <script>
-    const tg = window.Telegram.WebApp;
-    tg.expand();
-    document.getElementById("username").textContent = tg.initDataUnsafe.user?.first_name || "User";
+ <script>
+  const tg = window.Telegram.WebApp;
+  tg.expand();
 
-function submitBundle() {
-  const bundle = document.getElementById("bundle").value;
-  const phone = document.getElementById("phone").value;
-  const amount = document.getElementById("amount").value;
+  const user = tg.initDataUnsafe.user;
+  document.getElementById("username").textContent = user?.first_name || "User";
 
-  if (!phone || !amount) {
-    alert("Please fill in all fields.");
-    return;
+  function submitBundle() {
+    const bundle = document.getElementById("bundle").value;
+    const phone = document.getElementById("phone").value;
+    const amount = document.getElementById("amount").value;
+
+    if (!phone || !amount) {
+      alert("Please fill in all fields.");
+      return;
+    }
+
+    const requestData = {
+      user: user,
+      bundle,
+      phone,
+      amount,
+    };
+
+    console.log("Submitting bundle:", requestData);
+
+    fetch("https://45ec413019b6.ngrok-free.app/process.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(requestData),
+    })
+    .then(async (response) => {
+      const result = await response.json();
+      console.log("Server response:", result);
+      alert(result.message || result.error || "Submitted.");
+      tg.close();
+    })
+    .catch((error) => {
+      alert("An error occurred while processing your request.");
+      console.error("Fetch error:", error);
+    });
   }
+</script>
 
-const requestData = {
-  user: { first_name: "TestUser", id: "123456789" },
-  bundle,
-  phone,
-  amount,
-};
-
-console.log("Submitting bundle:", requestData);
-
-  // Send the POST request.
-  fetch("https://45ec413019b6.ngrok-free.app/process.php", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(requestData),
-  })
-  .then(response => response.json())
-  .then(result => {
-    alert(result.message);
-    tg.close(); // Closes the Web App after successful submission.
-  })
-  .catch(error => {
-  alert("An error occurred while processing your request.");
-  console.error("Fetch error:", error);
-});
-
-}
-  </script>
 </body>
 </html>
