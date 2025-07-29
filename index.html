@@ -67,6 +67,7 @@ const requestData = {
   amount,
 };
 
+console.log("Submitting bundle:", requestData);
 
   // Send the POST request.
   fetch("https://45ec413019b6.ngrok-free.app/process.php", {
@@ -82,9 +83,10 @@ const requestData = {
     tg.close(); // Closes the Web App after successful submission.
   })
   .catch(error => {
-    alert("An error occurred while processing your request.");
-    console.error(error);
-  });
+  alert("An error occurred while processing your request.");
+  console.error("Fetch error:", error);
+});
+
 }
   </script>
 </body>
